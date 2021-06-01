@@ -4,16 +4,21 @@ import { connect } from 'react-redux';
 import MainNavigation from '../components/MainNavigation';
 import { removeProductFromCart } from '../store/actions';
 import './Cart.css';
+import ShopContext from '../context/shop-context'
 
-class CartPage extends Component {
+export default class CartPage extends Component {
+  static contextType = ShopContext
+
   render() {
     return (
       <React.Fragment>
-        <MainNavigation cartItemNumber={this.props.cartItemCount} />
+        <MainNavigation cartItemNumber={this.context.cart.reduce((count, curItem) => {
+          return count + curItem.quantity;
+        }, 0)} />
         <main className="cart">
-          {this.props.cartItems.length <= 0 && <p>No Item in the Cart!</p>}
+          {this.context.cart.length <= 0 && <p>No Item in the Cart!</p>}
           <ul>
-            {this.props.cartItems.map(cartItem => (
+            {this.context.cart.map(cartItem => (
               <li key={cartItem.id}>
                 <div>
                   <strong>{cartItem.title}</strong> - ${cartItem.price} (
@@ -21,7 +26,7 @@ class CartPage extends Component {
                 </div>
                 <div>
                   <button
-                    onClick={this.props.removeProductFromCart.bind(
+                    onClick={this.context.removeProductFromCart.bind(
                       this,
                       cartItem.id
                     )}
@@ -53,7 +58,7 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CartPage);
+// export default connect(
+//   mapStateToProps,
+//   mapDispatchToProps
+// )(CartPage);
